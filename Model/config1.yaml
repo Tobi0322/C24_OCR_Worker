@@ -1,0 +1,15 @@
+rabbitmq:
+  rb_user: tobias
+  rb_host: 127.0.0.1
+  rb_port: 5672
+  rb_queue: ocrtasks
+
+ocr:
+  source_path: ImageDocuments
+  destination_path: TextFiles
+
+database:
+  db_host: 127.0.0.1
+  db_name: ocrtasks
+  db_user: root
+  db_pw: example

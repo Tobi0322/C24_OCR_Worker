@@ -1,0 +1,7 @@
+config.yaml
+dependencies.txt
+*.pdf
+*.jpg
+*.txt
+*.pyc
+*.DS_Store
