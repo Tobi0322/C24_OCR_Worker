@@ -9,6 +9,9 @@ import sys
 from Utils import load_ocr_config
 from Preprocessing import Binarization, Denoising, Deskewing
 from Exceptions import NoValidPreprocessingStepError
+from PIL import Image
+
+Image.MAX_IMAGE_PIXELS = None
 
 class FileFormat(Enum):
     """ PDF is regular pdf format
@@ -58,7 +61,7 @@ class ImageConverter():
     def _convert_to_image(self):
         images = []
         img_path = self.file_name + self._pdf_conversion_format
-        pages = convert_from_path(self._image_path + FileFormat.PDF.value, 350)
+        pages = convert_from_path(self._image_path + FileFormat.PDF.value, 500)
         for page in pages:
             page.save(img_path, 'JPEG')
             images.append(cv.imread(img_path, 0))
@@ -80,6 +83,7 @@ class ImageConverter():
         image_path = os.path.join(working_directory, source, folder, self.file_name)
         self._image_path = image_path
 
+
     def read_text_from_image(self):
         """ Reads the text from the image file configured.
 
@@ -91,12 +95,17 @@ class ImageConverter():
             images = self._get_image()
 
         text = ""
+        print(images)
         for image in images:
+            config = ('-l deu --oem 1')
             image_processed = self._preprocess(image)
-            byte_text = pytesseract.image_to_string(image_processed, lang="deu")
-            print(byte_text.decode('latin-1'))
-            text += byte_text.decode('latin-1')
+            byte_text = pytesseract.image_to_string(image_processed, config=config)
+            text += byte_text
+
+        print('#' * 30)
         print(text)
+        print('#' * 30)
+        
 
         # Remove the file used to convert the pdf
         conversion_file = os.path.join(os.getcwd(), self.file_name + self._pdf_conversion_format)
@@ -114,7 +123,7 @@ class ImageConverter():
         if os.path.exists(conversion_file):
             os.remove(conversion_file)
 
-        with open(self._destination_path, "w") as text_file:
+        with open(self._destination_path, "w", encoding='utf-8') as text_file:
             print(text, file=text_file)
 
         return self._destination_path
