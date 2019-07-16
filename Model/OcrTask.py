@@ -10,10 +10,8 @@ class TaskState(Enum):
 
 class OcrTaskModel(Base):
     __tablename__ = 'ocrTasks'
-    id = Column('id', Integer, primary_key=True, autoincrement=True)
+    id = Column('id', String(500), primary_key=True)
     status = Column('status', String(40))
-    image_path = Column('image', String(500), default="")
-    text_path = Column('text', String(500), default="")
     created = Column('created', DateTime, default=func.now())
 
     @classmethod

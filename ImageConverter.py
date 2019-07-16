@@ -37,13 +37,13 @@ class ImageConverter():
         source, destination = load_ocr_config()
 
         # Get the filename of the document
-        self.file_name = str(task_id)
+        self.file_name = "\\".join(str(task_id).split('/'))
         working_directory = os.getcwd()
         image_path = os.path.join(working_directory, source, self.file_name)
         self._image_path = image_path
 
         # Set the destination for the .txt to be saved to
-        text_file_name = self.file_name + '.txt'
+        text_file_name = self.file_name.split('.')[0] + '.txt'
         self._destination_path = os.path.join(working_directory, destination, text_file_name)
 
         self._pdf_conversion_format = '.jpg'
@@ -59,12 +59,17 @@ class ImageConverter():
         return image
 
     def _convert_to_image(self):
+        print(self.file_name)
+        print("Converting pdf to image.")
         images = []
-        img_path = self.file_name + self._pdf_conversion_format
-        pages = convert_from_path(self._image_path + FileFormat.PDF.value, 500)
+        print(self.file_name)
+        print(self._image_path)
+        pages = convert_from_path(self._image_path, dpi=300, fmt='JPEG', use_cropbox=True)
         for page in pages:
-            page.save(img_path, 'JPEG')
-            images.append(cv.imread(img_path, 0))
+            file_name = self._image_path.split('.')[0]
+            page.save(file_name, 'JPEG')
+            images.append(cv.imread(file_name, 0))
+        print(images)
         return images
 
     def _get_image(self):
@@ -89,6 +94,7 @@ class ImageConverter():
 
         :return: The text as string.
         """
+        print("Entering the converter")
         if self._input_format == FileFormat.PDF:
             images = self._convert_to_image()
         else:
@@ -97,16 +103,12 @@ class ImageConverter():
         text = ""
         print(images)
         for image in images:
-            config = ('-l deu --oem 1')
+            print(image)
+            config = ('-l deu --oem 1 --psm 1')
             image_processed = self._preprocess(image)
             byte_text = pytesseract.image_to_string(image_processed, config=config)
             text += byte_text
-
-        print('#' * 30)
-        print(text)
-        print('#' * 30)
         
-
         # Remove the file used to convert the pdf
         conversion_file = os.path.join(os.getcwd(), self.file_name + self._pdf_conversion_format)
         if os.path.exists(conversion_file):
@@ -124,6 +126,8 @@ class ImageConverter():
             os.remove(conversion_file)
 
         with open(self._destination_path, "w", encoding='utf-8') as text_file:
+            print('#'*30)
+            print("Saving the file to text")
             print(text, file=text_file)
 
         return self._destination_path

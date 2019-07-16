@@ -11,7 +11,7 @@ def load_ocr_config():
     """
     filename = get_config_file_name()
     with open(filename, 'r') as stream:
-        config = yaml.load(stream)
+        config = yaml.safe_load(stream)
         ocr_config = config['ocr']
         return ocr_config['source_path'], ocr_config['destination_path']
 

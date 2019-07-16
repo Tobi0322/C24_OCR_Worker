@@ -23,6 +23,13 @@ RUN apt-get -y install libmysqlclient-dev python-dev
 RUN mkdir /workspace
 WORKDIR /workspace
 
+ENV LANG de_DE.UTF-8
+ENV LANGUAGE de_DE.UTF-8
+ENV LC_ALL de_DE.UTF-8
+RUN apt-get install locales
+RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen
+RUN locale-gen
+
 ADD requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 

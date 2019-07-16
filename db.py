@@ -17,7 +17,7 @@ class Db():
         """
 
         with open(file, 'r') as stream:
-            config = yaml.load(stream)
+            config = yaml.safe_load(stream)
             db_config = config['database']
             return db_config['db_host'], db_config['db_name'], db_config['db_user'], db_config['db_pw']
 
