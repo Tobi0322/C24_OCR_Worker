@@ -6,7 +6,7 @@ import os
 import sys
 
 
-from Utils import load_ocr_config
+from OCR_Shared.Utils import load_ocr_config
 from Preprocessing import Binarization, Denoising, Deskewing
 from Exceptions import NoValidPreprocessingStepError
 from PIL import Image
@@ -43,7 +43,7 @@ class ImageConverter():
         self._image_path = image_path
 
         # Set the destination for the .txt to be saved to
-        text_file_name = self.file_name.split('.')[0] + '.txt'
+        text_file_name = self.file_name.split('.pdf')[0] + '.txt'
         self._destination_path = os.path.join(working_directory, destination, text_file_name)
 
         self._pdf_conversion_format = '.jpg'
